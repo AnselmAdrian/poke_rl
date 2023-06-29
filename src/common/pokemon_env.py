@@ -677,20 +677,6 @@ class  RLEnv(SimpleRLEnv):
                             Weather.SUNNYDAY: 7,
                         }
 
-    #Effect_emdedding = {k: i+ 1 for i, k in enumerate(list(vars(Effect).keys())[13:-1])}
-    #Field_emdedding = {k: i+ 1 for i, k in enumerate(list(vars(Field).keys())[11:-1])}
-    #PokemonType_emdedding = {k: i+ 1 for i, k in enumerate(list(vars(PokemonType).keys())[10:-1])}
-    #SideCondition_emdedding = {k: i+ 1 for i, k in enumerate(list(vars(SideCondition).keys())[10:-1])}
-    #Status_emdedding = {k: i+ 1 for i, k in enumerate(list(vars(Status).keys())[8:-1])}
-    #Weather_emdedding = {k: i+ 1 for i, k in enumerate(list(vars(Weather).keys())[10:-1])}
-
-    # print(Effect_emdedding)
-    # print(Field_emdedding)
-    # print(PokemonType_emdedding)
-    # print(SideCondition_emdedding)
-    # print(Status_emdedding)
-    # print(Weather_emdedding)
-
     Move_low = [0.0] * move_embedding_size
     Move_high = [1.0] * move_embedding_size
 
@@ -1245,39 +1231,10 @@ class  RLEnv(SimpleRLEnv):
             np.array(high, dtype=np.float32),
             dtype=np.float32,
         )
-
-class  RLEnv_multi_opponent(RLEnv):
-    def __init__(self, model = None, opponents = None, *args, **kwargs):
-        assert opponents, 'at least 1 opponent is required'
-        self.opponents = opponents
-        super().__init__(*args, opponent = self.opponents[0], **kwargs)
-        self.model = model
-
-    def _select_next_opponent(self):
-        return random.choice(self.opponents)
-
-    def reset_env(self, restart: bool = True):  # pragma: no cover
-        """
-        Resets the environment to an inactive state: it will forfeit all unfinished
-        battles, reset the internal battle tracker and optionally change the next
-        opponent and restart the challenge loop.
-
-        :param restart: If True the challenge loop will be restarted before returning,
-            otherwise the challenge loop will be left inactive and can be
-            started manually.
-        :type restart: bool
-        """
-        self.close(purge=False)
-        self.reset_battles()
-        if opponent:
-            self.set_opponent(self._select_next_opponent())
-        if restart:
-            self.start_challenging()
         
-
 if __name__ == '__main__': 
     from gym.utils.env_checker import check_env
-    from poke_env.player import RandomPlayer
+    from poke_env.player import RandomPlayer, MaxBasePowerPlayer
     import traceback
 
     ###########################################
@@ -1290,33 +1247,7 @@ if __name__ == '__main__':
 
     try:
         print('Checking RLEnv Environment')
-        for i in range(10):
-            if i % 50 == 0:
-                print(f'iteration: {i}')
-            train_env.reset()
-            check_env(train_env)
-        train_env.close()
-    except Exception as e:
-        print(f'stopped at iteration: {i}')
-        print(e)
-        traceback.print_exc()
-        train_env.close()
-    except KeyboardInterrupt:
-        train_env.close()
-        exit(1)
-    train_env.close()
-
-    ###########################################
-    ########### RLEnv_multi_opponent ##########
-    ###########################################
-    opponent = RandomPlayer(battle_format="gen8randombattle")
-    train_env = RLEnv_multi_opponent(battle_format="gen8randombattle", opponent = opponent, start_challenging=True)
-
-    x = train_env.reset()
-
-    try:
-        print('Checking RLEnv_multi_opponent Environment')
-        for i in range(10):
+        for i in range(200):
             if i % 50 == 0:
                 print(f'iteration: {i}')
             train_env.reset()
