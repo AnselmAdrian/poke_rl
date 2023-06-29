@@ -5,13 +5,14 @@ from datetime import datetime
 import torch as th
 
 from gym.utils.env_checker import check_env
-from poke_env.player import RandomPlayer
+from poke_env.player import RandomPlayer, MaxBasePowerPlayer
 from stable_baselines3 import PPO
 import time
 import asyncio
 from poke_env.player import background_evaluate_player
 from common import SimpleRLEnv, RLEnv, evaluate_player, TestRLPlayer
 from common.model import CustomMLP
+from random import choice
 
 if __name__ == '__main__':
 
@@ -29,6 +30,9 @@ if __name__ == '__main__':
         )
 
     opponent = RandomPlayer(battle_format="gen8randombattle")
+
+    opponents = [RandomPlayer(battle_format="gen8randombattle"),
+                 MaxBasePowerPlayer(battle_format="gen8randombattle")]
     #train_env = SimpleRLEnv(battle_format="gen8randombattle", opponent = opponent, start_challenging=True)
     train_env = RLEnv(battle_format="gen8randombattle", opponent = opponent, start_challenging=True)
     try:
@@ -49,7 +53,7 @@ if __name__ == '__main__':
     kwargs = {
                 'learning_rate': 0.0001,  
                 'gamma': 0.95, 
-                'gae_lambda': 0.5924822869558098, 
+                'gae_lambda': 0.6, 
                 'normalize_advantage': True, 
                 'ent_coef': 1.7e-07, 
                 'vf_coef': 0.18
@@ -61,11 +65,17 @@ if __name__ == '__main__':
                             features_extractor_kwargs=dict(features_dim=128)
                     )
 
-    model = PPO('MlpPolicy', env = train_env, verbose = 1, batch_size = 64, 
+    model = PPO('MlpPolicy', env = train_env, verbose = 1, batch_size = 16, 
                 policy_kwargs = policy_kwargs, **kwargs, tensorboard_log="logs/ppo/")
-    model.load('data/06_model/pokemon/TestRLEnv/ppo_20230625_081359.h5') # Best version so far
+    #model.load('data/06_model/pokemon/TestRLEnv/ppo_20230625_081359.h5') # Best version so far
     try:
-        model.learn(500_000)
+        for _ in range(1000):
+            model.learn(1000)
+
+            curr_opponent = choice(opponents)
+            print(f'Changing to {curr_opponent}')
+            train_env.reset_env(opponent = curr_opponent)
+            model.set_env(train_env, force_reset=True)
     except Exception as e:
         print('Stopping training early due to error!')
         print(e)
