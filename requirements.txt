@@ -1,0 +1,10 @@
+pandas
+numpy
+plotly
+matplotlib
+stable-baselines3
+statsmodels
+scikit-learn
+ipykernel
+optuna
+poke-env
