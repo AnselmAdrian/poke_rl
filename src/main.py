@@ -31,7 +31,7 @@ async def main_bot_vs_bot():
     #     battle_format="gen8randombattle"
     # )
     # model = PPO.load('data/06_model/pokemon/TestRLEnv/ppo_test1.h5')
-    model = PPO.load('data/06_model/pokemon/TestRLEnv//ppo_20230625_165229.h5')
+    model = PPO.load('data/06_model/pokemon/TestRLEnv/ppo_20230625_165229.h5')
     rl_player = TestRLPlayer(model = model,
         battle_format="gen8randombattle",
     )
@@ -50,7 +50,7 @@ async def main_bot_vs_bot():
 
 async def main_bot_vs_human():
     start = time.time()
-
+    player_configuration=PlayerConfiguration("deadlykitten", None)
     # We create a random player
     # player = RandomPlayer(
     #     player_configuration=PlayerConfiguration("bot_username", None),
@@ -58,12 +58,16 @@ async def main_bot_vs_human():
     # )
     #model = PPO.load('data/06_model/pokemon/TestRLEnv/ppo_test1.h5')
     model = PPO.load('data/06_model/pokemon/TestRLEnv/ppo_20230619_062147.h5')
+
     player = TestRLPlayer(model = model,
-        player_configuration=PlayerConfiguration("bot_username", None),
+        player_configuration=player_configuration,
         server_configuration=my_server_config,
         battle_format="gen8randombattle"
     )
-
+    # player = RandomPlayer(
+    #         battle_format="gen8randombattle",
+    #         player_configuration = player_configuration,
+    #     )
     # Sending challenges to 'your_username'
     await player.send_challenges("AnselmAdrian", n_challenges=1)
 
@@ -116,5 +120,5 @@ if __name__ == '__main__':
     # my_player_config = PlayerConfiguration("my_username", None) 
     # my_player_config = PlayerConfiguration("my_username", "super-secret-password")
 
-    #asyncio.get_event_loop().run_until_complete(main_bot_vs_human())
-    asyncio.get_event_loop().run_until_complete(main_bot_vs_bot())
+    asyncio.get_event_loop().run_until_complete(main_bot_vs_human())
+    #asyncio.get_event_loop().run_until_complete(main_bot_vs_bot())
