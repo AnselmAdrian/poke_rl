@@ -31,7 +31,7 @@ async def main_bot_vs_bot():
     #     battle_format="gen8randombattle"
     # )
     # model = PPO.load('data/06_model/pokemon/TestRLEnv/ppo_test1.h5')
-    model = PPO.load('data/06_model/pokemon/TestRLEnv/ppo_20230625_165229.h5')
+    model = PPO.load('data/06_model/pokemon/TestRLEnv/ppo_20230630_192429.h5')
     rl_player = TestRLPlayer(model = model,
         battle_format="gen8randombattle",
     )
@@ -57,7 +57,9 @@ async def main_bot_vs_human():
     #     server_configuration=my_server_config,
     # )
     #model = PPO.load('data/06_model/pokemon/TestRLEnv/ppo_test1.h5')
-    model = PPO.load('data/06_model/pokemon/TestRLEnv/ppo_20230619_062147.h5')
+    #model = PPO.load('data/06_model/pokemon/TestRLEnv/ppo_20230619_062147.h5')
+    model = PPO.load('data/06_model/pokemon/TestRLEnv/ppo_20230630_192429.h5')
+    #model = PPO.load('data/06_model/pokemon/TestRLEnv/ppo_20230629_163155.h5')
 
     player = TestRLPlayer(model = model,
         player_configuration=player_configuration,
@@ -75,10 +77,10 @@ async def main_bot_vs_human():
     await player.accept_challenges(None, 1)
 
     # Accepting three challenges from 'your_username'
-    await player.accept_challenges('AnselmAdrian', 1)
+    # await player.accept_challenges('AnselmAdrian', 1)
 
     # Playing 5 games on the ladder
-    await player.ladder(1)
+    # await player.ladder(1)
 
     # Print the rating of the player and its opponent after each battle
     for battle in player.battles.values():
@@ -121,4 +123,4 @@ if __name__ == '__main__':
     # my_player_config = PlayerConfiguration("my_username", "super-secret-password")
 
     asyncio.get_event_loop().run_until_complete(main_bot_vs_human())
-    #asyncio.get_event_loop().run_until_complete(main_bot_vs_bot())
+    # asyncio.get_event_loop().run_until_complete(main_bot_vs_bot())

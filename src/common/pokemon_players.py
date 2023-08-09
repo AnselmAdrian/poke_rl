@@ -15,6 +15,13 @@ class MaxDamagePlayer(Player):
         else:
             return self.choose_random_move(battle)
         
+class HumanPlayer(Player):
+    def choose_move(self, battle):
+        for i, move in enumerate(battle.available_moves):
+            print(i, move)
+        move_idx = input()
+        return battle.available_moves[move_idx]
+        
 class RLPlayer(Player):
     def __init__(self, model = None, *args, **kwargs):
         super().__init__(*args, **kwargs)

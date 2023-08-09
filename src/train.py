@@ -11,7 +11,7 @@ import time
 import asyncio
 from poke_env.player import background_evaluate_player
 from common import SimpleRLEnv, RLEnv, evaluate_player, TestRLPlayer
-from common.model import CustomMLP
+from model import CustomMLP
 from random import choice
 
 if __name__ == '__main__':
@@ -31,8 +31,10 @@ if __name__ == '__main__':
 
     opponent = RandomPlayer(battle_format="gen8randombattle")
 
-    opponents = [RandomPlayer(battle_format="gen8randombattle"),
-                 MaxBasePowerPlayer(battle_format="gen8randombattle")]
+    opponents = [
+                    RandomPlayer(battle_format="gen8randombattle"),
+                    # MaxBasePowerPlayer(battle_format="gen8randombattle")
+                 ]
     #train_env = SimpleRLEnv(battle_format="gen8randombattle", opponent = opponent, start_challenging=True)
     train_env = RLEnv(battle_format="gen8randombattle", opponent = opponent, start_challenging=True)
     try:
@@ -54,6 +56,7 @@ if __name__ == '__main__':
                 'learning_rate': 0.0001,  
                 'gamma': 0.95, 
                 'gae_lambda': 0.6, 
+                'clip_range': 0.1,
                 'normalize_advantage': True, 
                 'ent_coef': 1.7e-07, 
                 'vf_coef': 0.18
@@ -67,10 +70,10 @@ if __name__ == '__main__':
 
     model = PPO('MlpPolicy', env = train_env, verbose = 1, batch_size = 16, 
                 policy_kwargs = policy_kwargs, **kwargs, tensorboard_log="logs/ppo/")
-    #model.load('data/06_model/pokemon/TestRLEnv/ppo_20230625_081359.h5') # Best version so far
+    model.load('data/06_model/pokemon/TestRLEnv/ppo_20230630_192429.h5') # Best version so far
     try:
         for _ in range(1000):
-            model.learn(1000)
+            model.learn(1000_000)
 
             curr_opponent = choice(opponents)
             print(f'Changing to {curr_opponent}')
